@@ -1,19 +1,18 @@
-package org.example.pharmacy.infrastructure.entity;
+package org.example.pharmacy.service.model;
 
-import jakarta.persistence.*;
+public class DrugModel {
 
-@Entity
-@Table(name = "drugs")
-public class DrugEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(name = "name", nullable = false)
     private String name;
-    @Column(name = "price", nullable = false)
     private Float price;
-    @Column(name = "description")
     private String description;
+
+    public DrugModel(Long id, String name, Float price, String description) {
+        this.id = id;
+        this.name = name;
+        this.price = price;
+        this.description = description;
+    }
 
     public Long getId() {
         return id;
