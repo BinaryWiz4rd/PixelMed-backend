@@ -1,19 +1,17 @@
-package org.example.pharmacy.infrastructure.entity;
+package org.example.pharmacy.controller.dto;
 
-import jakarta.persistence.*;
-
-@Entity
-@Table(name = "drugs")
-public class DrugEntity {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class DrugResponseDto {
     private Long id;
-    @Column(name = "name", nullable = false)
     private String name;
-    @Column(name = "price", nullable = false)
-    private Float price;
-    @Column(name = "description")
+    private double price;
     private String description;
+
+    public DrugResponseDto(Long id, String name, double price, String description) {
+        this.id = id;
+        this.name = name;
+        this.price = price;
+        this.description = description;
+    }
 
     public Long getId() {
         return id;
@@ -31,11 +29,11 @@ public class DrugEntity {
         this.name = name;
     }
 
-    public Float getPrice() {
+    public double getPrice() {
         return price;
     }
 
-    public void setPrice(Float price) {
+    public void setPrice(double price) {
         this.price = price;
     }
 
