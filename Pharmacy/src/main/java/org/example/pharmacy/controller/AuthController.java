@@ -4,11 +4,13 @@ import org.example.pharmacy.controller.dto.LoginRequestDto;
 import org.example.pharmacy.controller.dto.LoginResponseDto;
 import org.example.pharmacy.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -24,6 +26,7 @@ public class AuthController {
     @PostMapping("/login")
     @PreAuthorize("permitAll()")
     public LoginResponseDto login(@RequestBody LoginRequestDto loginRequestDto) {
+        //return new LoginResponseDto("asljdfdlska");
         return authService.login(loginRequestDto);
     }
 }
