@@ -49,4 +49,4 @@ public class AuthService {
                 throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, e.getMessage());
             }
    }
-}
+} 
