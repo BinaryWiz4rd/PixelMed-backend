@@ -9,11 +9,14 @@ public class CreateDrugRequestDto {
     @Min(value = 0, message = "price cant be negative")
     private float price;
     private String description;
+    @Min(value = 0, message = "stock cant be negative")
+    private int stock;
 
-    public CreateDrugRequestDto(String name, float price, String description) { // Changed Float to float
+    public CreateDrugRequestDto(String name, float price, String description, int stock) {
         this.name = name;
         this.price = price;
         this.description = description;
+        this.stock = stock;
     }
 
     public String getName() {
@@ -38,5 +41,13 @@ public class CreateDrugRequestDto {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public int getStock() {
+        return stock;
+    }
+
+    public void setStock(int stock) {
+        this.stock = stock;
     }
 }

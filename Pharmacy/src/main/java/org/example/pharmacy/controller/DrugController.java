@@ -2,6 +2,7 @@ package org.example.pharmacy.controller;
 
 import org.example.pharmacy.controller.dto.CreateDrugRequestDto;
 import org.example.pharmacy.controller.dto.DrugResponseDto;
+import org.example.pharmacy.controller.dto.PurchaseRequestDto;
 import org.example.pharmacy.service.DrugService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -34,7 +35,14 @@ public class DrugController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public DrugResponseDto createDrug(@Validated @RequestBody CreateDrugRequestDto drug) {
         return drugService.create(drug);
+    }
+
+    @PostMapping("/purchase")
+    @PreAuthorize("hasAnyRole('ROLE_PHARMACIST', 'ROLE_ADMIN')")
+    public DrugResponseDto purchaseDrug(@Validated @RequestBody PurchaseRequestDto purchaseDto) {
+        return drugService.purchaseDrug(purchaseDto);
     }
 }

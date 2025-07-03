@@ -5,12 +5,14 @@ public class DrugResponseDto {
     private String name;
     private double price;
     private String description;
+    private int stock;
 
-    public DrugResponseDto(Long id, String name, double price, String description) {
+    public DrugResponseDto(Long id, String name, double price, String description, int stock) {
         this.id = id;
         this.name = name;
         this.price = price;
         this.description = description;
+        this.stock = stock;
     }
 
     public Long getId() {
@@ -43,5 +45,13 @@ public class DrugResponseDto {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public int getStock() {
+        return stock;
+    }
+
+    public void setStock(int stock) {
+        this.stock = stock;
     }
 }

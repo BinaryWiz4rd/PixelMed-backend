@@ -14,6 +14,8 @@ public class DrugEntity {
     private Float price;
     @Column(name = "description")
     private String description;
+    @Column(name = "stock", nullable = false)
+    private int stock;
 
     public Long getId() {
         return id;
@@ -45,5 +47,13 @@ public class DrugEntity {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public int getStock() {
+        return stock;
+    }
+
+    public void setStock(int stock) {
+        this.stock = stock;
     }
 }
