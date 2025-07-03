@@ -41,7 +41,7 @@ public class DrugController {
     }
 
     @PostMapping("/purchase")
-    @PreAuthorize("hasAnyRole('ROLE_PHARMACIST', 'ROLE_ADMIN')")
+    @PreAuthorize("hasRole('ROLE_PHARMACIST')")
     public DrugResponseDto purchaseDrug(@Validated @RequestBody PurchaseRequestDto purchaseDto) {
         return drugService.purchaseDrug(purchaseDto);
     }

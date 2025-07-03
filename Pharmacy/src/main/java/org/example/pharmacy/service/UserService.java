@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 @Service
 public class UserService {
@@ -31,7 +33,7 @@ public class UserService {
     public CreateUserResponseDto createUser(CreateUserRequestDto userDto) {
         if (userRepository.findByUsername(userDto.getUsername()).isPresent() ||
                 authRepository.findByUsername(userDto.getUsername()).isPresent()) {
-            throw new RuntimeException("username already exists.");
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "username already exists."); // Use CONFLICT status
         }
 
         var userEntity = new UserEntity();
@@ -51,29 +53,29 @@ public class UserService {
     }
 
     public UserResponseDto getUser(long id) {
-        var user = userRepository.findById(id).orElseThrow(() -> new RuntimeException("user not found."));
+        var user = userRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "user not found."));
         return new UserResponseDto(user.getId(), user.getUsername());
     }
 
     public UserResponseDto getUserByUsername(String username) {
-        var authEntity = authRepository.findByUsername(username).orElseThrow(() -> new RuntimeException("user not found."));
+        var authEntity = authRepository.findByUsername(username).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found."));
         return new UserResponseDto(authEntity.getUser().getId(), authEntity.getUsername());
     }
 
     @Transactional
     public UserResponseDto updateUser(Long id, UpdateUserRequestDto userDto) {
         UserEntity userEntity = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("user not found."));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "user not found."));
 
         AuthEntity authEntity = authRepository.findByUsername(userEntity.getUsername())
-                .orElseThrow(() -> new RuntimeException("auth record not found for user."));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "auth record not found for user."));
 
         boolean updated = false;
 
         if (userDto.getUsername() != null && !userDto.getUsername().isEmpty() && !userDto.getUsername().equals(userEntity.getUsername())) {
             if (userRepository.findByUsername(userDto.getUsername()).isPresent() ||
                     authRepository.findByUsername(userDto.getUsername()).isPresent()) {
-                throw new RuntimeException("new username already exists.");
+                throw new ResponseStatusException(HttpStatus.CONFLICT, "New username already exists.");
             }
             userEntity.setUsername(userDto.getUsername());
             authEntity.setUsername(userDto.getUsername());
@@ -98,10 +100,10 @@ public class UserService {
     @Transactional
     public void deleteUser(Long id) {
         UserEntity userEntity = userRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("user not found."));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "user not found."));
 
         AuthEntity authEntity = authRepository.findByUsername(userEntity.getUsername())
-                .orElseThrow(() -> new RuntimeException("auth record not found for user."));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "auth record not found for user."));
 
         authRepository.delete(authEntity);
         userRepository.delete(userEntity);
