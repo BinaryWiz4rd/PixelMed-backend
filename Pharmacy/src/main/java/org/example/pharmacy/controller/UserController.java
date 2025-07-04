@@ -40,13 +40,13 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    @PreAuthorize("isAuthenticated() and #id == principal.id")
+    @PreAuthorize("isAuthenticated() and @userService.isOwner(#id, authentication)")
     public UserResponseDto updateUser(@PathVariable Long id, @Validated @RequestBody UpdateUserRequestDto userDto, Principal principal) {
         return userService.updateUser(id, userDto);
     }
 
     @DeleteMapping("/{id}")
-    @PreAuthorize("isAuthenticated() and #id == principal.id")
+    @PreAuthorize("isAuthenticated() and @userService.isOwner(#id, authentication)")
     public void deleteUser(@PathVariable Long id, Principal principal) {
         userService.deleteUser(id);
     }

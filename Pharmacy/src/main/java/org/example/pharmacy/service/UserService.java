@@ -15,6 +15,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.security.core.Authentication; // Import Authentication
+
+import java.util.Optional;
 
 @Service
 public class UserService {
@@ -33,7 +36,7 @@ public class UserService {
     public CreateUserResponseDto createUser(CreateUserRequestDto userDto) {
         if (userRepository.findByUsername(userDto.getUsername()).isPresent() ||
                 authRepository.findByUsername(userDto.getUsername()).isPresent()) {
-            throw new ResponseStatusException(HttpStatus.CONFLICT, "username already exists."); // Use CONFLICT status
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "username already exists.");
         }
 
         var userEntity = new UserEntity();
@@ -44,7 +47,7 @@ public class UserService {
         var authEntity = new AuthEntity();
         authEntity.setUsername(userDto.getUsername());
         authEntity.setPassword(savedUser.getPassword());
-        authEntity.setRole(UserRole.ROLE_PHARMACIST);
+        authEntity.setRole(UserRole.ROLE_PHARMACIST); // Default role for new users
         authEntity.setUser(savedUser);
 
         authRepository.save(authEntity);
@@ -89,6 +92,13 @@ public class UserService {
             updated = true;
         }
 
+        // Removed email update logic as the field is not present in DTO or entities
+        // if (userDto.getEmail() != null && !userDto.getEmail().isEmpty() && !userDto.getEmail().equals(userEntity.getEmail())) {
+        //     userEntity.setEmail(userDto.getEmail());
+        //     updated = true;
+        // }
+
+
         if (updated) {
             userRepository.save(userEntity);
             authRepository.save(authEntity);
@@ -107,5 +117,35 @@ public class UserService {
 
         authRepository.delete(authEntity);
         userRepository.delete(userEntity);
+    }
+
+    // This method is used by @PreAuthorize
+    public boolean isOwner(Long userId, Authentication authentication) {
+        System.out.println("--- isOwner check ---");
+        System.out.println("Path Variable userId: " + userId);
+
+        if (authentication == null || !authentication.isAuthenticated()) {
+            System.out.println("Authentication is null or not authenticated. Returning false.");
+            return false;
+        }
+
+        Object principal = authentication.getPrincipal();
+        if (!(principal instanceof CustomUserDetails)) {
+            System.out.println("Principal is not an instance of CustomUserDetails. Returning false.");
+            return false;
+        }
+
+        CustomUserDetails authenticatedUser = (CustomUserDetails) principal;
+        Long authenticatedUserId = authenticatedUser.getId();
+        String authenticatedUsername = authenticatedUser.getUsername();
+
+        System.out.println("Authenticated User ID from Principal: " + authenticatedUserId);
+        System.out.println("Authenticated Username from Principal: " + authenticatedUsername);
+
+
+        boolean isMatch = authenticatedUserId.equals(userId);
+        System.out.println("Does authenticated user ID match path variable ID? " + isMatch);
+        System.out.println("--- End isOwner check ---");
+        return isMatch;
     }
 }
